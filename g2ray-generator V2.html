@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>g2ray Setup Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Tahoma,Arial,sans-serif;background:#0f0f0f;color:#e0e0e0;padding:2rem;min-height:100vh;direction:rtl}
+h1{font-size:22px;font-weight:600;margin-bottom:4px;color:#fff}
+.sub{font-size:14px;color:#666;margin-bottom:2rem}
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:1px solid #2a2a2a;padding-bottom:0}
+.tab{padding:8px 18px;font-size:13px;cursor:pointer;border:none;background:transparent;color:#888;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab.active{color:#6ee7b7;border-bottom-color:#6ee7b7}
+.tab:hover{color:#ccc}
+.panel{display:none}.panel.active{display:block}
+.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.card-title{font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+.field{margin-bottom:.875rem}
+.field label{display:block;font-size:13px;color:#aaa;margin-bottom:5px}
+.field input,.field select{width:100%;padding:8px 12px;font-size:14px;border:1px solid #2a2a2a;border-radius:8px;background:#111;color:#e0e0e0;outline:none;font-family:inherit}
+.field input:focus,.field select:focus{border-color:#444}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.uuid-box{font-family:monospace;font-size:12px;color:#6ee7b7;padding:8px 12px;background:#111;border-radius:8px;margin-top:4px;word-break:break-all;border:1px solid #2a2a2a}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.25rem}
+button{padding:9px 18px;font-size:13px;border:1px solid #333;border-radius:8px;background:transparent;color:#e0e0e0;cursor:pointer;font-family:inherit;transition:all .15s}
+button:hover{background:#222;border-color:#555}
+button.primary{background:#fff;color:#000;border-color:#fff;font-weight:600}
+button.primary:hover{background:#ddd}
+button.dl-btn{padding:6px 12px;font-size:12px}
+.file-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #222}
+.file-row:last-child{border:none}
+.file-name{font-family:monospace;font-size:13px;color:#e0e0e0}
+.file-desc{font-size:12px;color:#666;margin-top:2px}
+.badge{font-size:11px;padding:2px 8px;border-radius:6px;background:#2a3a2a;color:#6ee7b7}
+.badge.warn{background:#3a3a1a;color:#fbbf24}
+.preview{background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:1rem;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all;color:#aaa;max-height:200px;overflow-y:auto;line-height:1.7}
+.dl-all{width:100%;margin-top:1rem;padding:11px;font-size:14px;background:#6ee7b7;color:#000;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit}
+.dl-all:hover{background:#5bd4a4}
+.done{color:#6ee7b7;font-size:13px;margin-top:.75rem;display:none;text-align:center}
+/* آموزش */
+.step{display:flex;gap:1rem;margin-bottom:1.5rem;align-items:flex-start}
+.step-num{min-width:32px;height:32px;border-radius:50%;background:#6ee7b7;color:#000;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body h3{font-size:15px;font-weight:600;color:#fff;margin-bottom:6px}
+.step-body p{font-size:13px;color:#aaa;line-height:1.7}
+.step-body code{font-family:monospace;background:#111;border:1px solid #2a2a2a;padding:2px 7px;border-radius:5px;font-size:12px;color:#6ee7b7}
+.note{background:#1a2a1a;border:1px solid #2a3a2a;border-radius:8px;padding:1rem;font-size:13px;color:#aaa;line-height:1.7;margin-top:.5rem}
+.note strong{color:#6ee7b7}
+.warn-note{background:#2a2a1a;border:1px solid #3a3a2a;border-radius:8px;padding:1rem;font-size:13px;color:#aaa;line-height:1.7;margin-bottom:1rem}
+.warn-note strong{color:#fbbf24}
+.cmd{background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:.75rem 1rem;font-family:monospace;font-size:12px;color:#6ee7b7;margin:.5rem 0;line-height:1.8}
+.divider{border:none;border-top:1px solid #222;margin:1.5rem 0}
+/* تلگرام */
+.tg-box{display:flex;align-items:center;gap:1rem;padding:1rem;background:#1a1a2a;border:1px solid #2a2a3a;border-radius:10px}
+.tg-icon{font-size:32px}
+.tg-info h3{font-size:15px;font-weight:600;color:#fff;margin-bottom:3px}
+.tg-info a{color:#6ee7b7;font-size:14px;text-decoration:none}
+.tg-info a:hover{text-decoration:underline}
+.tg-info p{font-size:12px;color:#666;margin-top:3px}
+</style>
+</head>
+<body>
+<h1>⚙️ g2ray Setup Generator</h1>
+<p class="sub">ساخت فایل‌های یکتا برای GitHub Codespaces — جلوگیری از بن شدن اکانت</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('gen')">🔧 Generator</button>
+  <button class="tab" onclick="showTab('tutorial')">📖 آموزش</button>
+  <button class="tab" onclick="showTab('support')">💬 پشتیبانی</button>
+</div>
+
+<!-- تب Generator -->
+<div class="panel active" id="tab-gen">
+  <div class="card">
+    <div class="card-title">تنظیمات</div>
+    <div class="field">
+      <label>نام Codespace (دلخواه — خالی = رندوم)</label>
+      <input type="text" id="csName" placeholder="مثال: my-proxy-2025" />
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>نسخه Xray</label>
+        <select id="xrayVer">
+          <option value="v26.3.27">v26.3.27 (پیشنهادی)</option>
+          <option value="v25.11.30">v25.11.30</option>
+          <option value="v25.9.19">v25.9.19</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>idle timeout (دقیقه)</label>
+        <select id="idleTimeout">
+          <option value="240">240 (حداکثر)</option>
+          <option value="120">120</option>
+          <option value="60">60</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>UUID (رندوم — هر بار متفاوت)</label>
+      <div class="uuid-box" id="uuidShow">—</div>
+    </div>
+    <div class="btn-group">
+      <button class="primary" onclick="generate()">🔧 ساخت فایل‌های یکتا</button>
+      <button onclick="newUUID()">🎲 UUID جدید</button>
+    </div>
+  </div>
+
+  <div class="card" id="outputCard" style="display:none">
+    <div class="card-title">فایل‌های آماده دانلود</div>
+    <div id="fileList"></div>
+    <button class="dl-all" onclick="dlAll()">⬇️ دانلود همه فایل‌ها</button>
+    <div class="done" id="doneMsg">✅ دانلود شد — فایل‌ها را در پوشه .devcontainer ریپو جایگزین کنید</div>
+  </div>
+
+  <div class="card" id="previewCard" style="display:none">
+    <div class="card-title">پیش‌نمایش config.json</div>
+    <div class="preview" id="configPreview"></div>
+  </div>
+</div>
+
+<!-- تب آموزش -->
+<div class="panel" id="tab-tutorial">
+  <div class="card">
+    <div class="card-title">پیش‌نیازها</div>
+    <div class="warn-note">
+      <strong>⚠️ مهم:</strong> برای هر اکانت GitHub فقط یک بار از این روش استفاده کنید. اگر چند Codespace با فایل‌های یکسان بسازید، احتمال بن شدن وجود دارد. این Generator همین مشکل را حل می‌کند.
+    </div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>ساخت اکانت GitHub</h3>
+        <p>به <a href="https://github.com" target="_blank" style="color:#6ee7b7">github.com</a> بروید و یک اکانت جدید بسازید. برای هر پروکسی جداگانه یک اکانت مجزا توصیه می‌شود.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Fork کردن ریپو</h3>
+        <p>ریپوی اصلی g2ray را Fork کنید. سپس وارد ریپوی Fork شده خودتان شوید.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>ساخت فایل‌های یکتا با این ابزار</h3>
+        <p>در تب <strong>Generator</strong> روی <strong>ساخت فایل‌های یکتا</strong> بزنید و سپس همه فایل‌ها را دانلود کنید.</p>
+        <div class="note"><strong>نکته:</strong> UUID شما هر بار که این HTML را باز کنید کاملاً رندوم است و با هیچ فورک دیگری یکسان نخواهد بود.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>جایگزین کردن فایل‌ها در ریپو</h3>
+        <p>در ریپوی GitHub خود، پوشه <code>.devcontainer</code> را باز کنید. هر فایل را یکی‌یکی با نسخه دانلود شده جایگزین کنید (آپلود و commit).</p>
+        <div class="note">
+          <strong>ساختار صحیح پوشه .devcontainer:</strong><br><br>
+          📁 .devcontainer/<br>
+          &nbsp;&nbsp;├── config.json<br>
+          &nbsp;&nbsp;├── Dockerfile<br>
+          &nbsp;&nbsp;├── devcontainer.json<br>
+          &nbsp;&nbsp;├── setup.sh<br>
+          &nbsp;&nbsp;├── show-link.sh<br>
+          &nbsp;&nbsp;└── start.sh
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>ساخت Codespace</h3>
+        <p>در ریپوی GitHub روی <strong>Code</strong> کلیک کنید، تب <strong>Codespaces</strong> را انتخاب کنید و <strong>New codespace</strong> را بزنید. چند دقیقه صبر کنید تا build کامل شود.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h3>دریافت لینک اتصال</h3>
+        <p>بعد از build، لینک VLESS به صورت خودکار در ترمینال نمایش داده می‌شود. اگر نشان نداد، این دستور را بزنید:</p>
+        <div class="cmd">show-link.sh</div>
+        <p>لینک را کپی و در کلاینت وارد کنید.</p>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="card-title">مدیریت Codespace بدون باز کردن GitHub</div>
+    <div class="step">
+      <div class="step-num">★</div>
+      <div class="step-body">
+        <h3>روشن/خاموش از ترمینال</h3>
+        <p>با نصب GitHub CLI می‌توانید از هر جایی Codespace را کنترل کنید:</p>
+        <div class="cmd">
+          gh codespace list<br>
+          gh codespace start -c CODESPACE_NAME<br>
+          gh codespace stop -c CODESPACE_NAME<br>
+          gh codespace ssh -c CODESPACE_NAME
+        </div>
+        <div class="note"><strong>اپ موبایل:</strong> اپ <strong>GitHub Mobile</strong> را نصب کنید — از آنجا بدون مرورگر می‌توانید start/stop کنید.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">★</div>
+      <div class="step-body">
+        <h3>سقف رایگان ماهانه</h3>
+        <p>اکانت رایگان GitHub ماهانه <strong>120 core-hour</strong> دارد. چون از ۲ هسته استفاده می‌شود، معادل <strong>60 ساعت در ماه</strong> است. بعد از استفاده Codespace را stop کنید تا quota هدر نرود.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">★</div>
+      <div class="step-body">
+        <h3>کلاینت‌های سازگار</h3>
+        <p>برای اتصال از این کلاینت‌ها استفاده کنید:</p>
+        <div class="cmd">
+          اندروید: v2rayNG — Nekobox<br>
+          ویندوز: v2rayN — Nekoray<br>
+          iOS: Streisand — FoXray — Shadowrocket<br>
+          مک: FoXray — V2Box
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- تب پشتیبانی -->
+<div class="panel" id="tab-support">
+  <div class="card">
+    <div class="card-title">ارتباط با سازنده</div>
+    <div class="tg-box">
+      <div class="tg-icon">✈️</div>
+      <div class="tg-info">
+        <h3>پشتیبانی تلگرام</h3>
+        <a href="https://t.me/M_Alone" target="_blank">@M_Alone</a>
+        <p>برای سوال، مشکل فنی، یا پیشنهاد بهبود پیام دهید</p>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="card-title">سوالات متداول</div>
+    <div class="step">
+      <div class="step-num">?</div>
+      <div class="step-body">
+        <h3>پینگ نمی‌دهد — مشکل دارد؟</h3>
+        <p>خیر — Codespace hostname از نوع HTTPS است و ICMP (پینگ) همیشه بلاک است. برای تست اتصال از curl استفاده کنید:</p>
+        <div class="cmd">curl -I https://CODESPACE_NAME-443.app.github.dev/</div>
+        <p>اگر پاسخ <code>200</code> یا <code>502</code> برگشت، سرور آنلاین است.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">?</div>
+      <div class="step-body">
+        <h3>Codespace خودش خاموش می‌شود</h3>
+        <p>این رفتار طبیعی GitHub است. اسکریپت <code>start.sh</code> یک keep-alive داخلی دارد که هر ۵ دقیقه یک سیگنال می‌فرستد. اگر باز هم خاموش شد، timeout را در تنظیمات GitHub روی ۲۴۰ دقیقه بگذارید.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">?</div>
+      <div class="step-body">
+        <h3>خطای geoip.dat هنگام اجرا</h3>
+        <p>در ترمینال Codespace بزنید:</p>
+        <div class="cmd">
+          sudo curl -sL "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat" -o /usr/local/bin/geoip.dat<br>
+          sudo curl -sL "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat" -o /usr/local/bin/geosite.dat
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">?</div>
+      <div class="step-body">
+        <h3>چرا باید فایل‌ها را یکتا کنم؟</h3>
+        <p>اگر همه فورک‌ها UUID و config یکسان داشته باشند، GitHub آن‌ها را به عنوان یک pattern شناسایی می‌کند و اکانت‌ها را بن می‌کند. این Generator هر بار UUID و نام متفاوت تولید می‌کند.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentUUID='';
+let files={};
+
+function showTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.remove('active')});
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const tabs=document.querySelectorAll('.tab');
+  const map={gen:0,tutorial:1,support:2};
+  tabs[map[id]].classList.add('active');
+}
+
+function uuidv4(){
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>
+    (c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
+}
+function randHex(n){let r='';const h='0123456789abcdef';for(let i=0;i<n;i++)r+=h[Math.floor(Math.random()*16)];return r;}
+function randName(){
+  const a=['swift','dark','bright','cold','sharp','calm','bold','quiet','silver','iron'];
+  const b=['proxy','relay','node','gate','link','path','wave','edge','mesh','tunnel'];
+  return a[Math.floor(Math.random()*a.length)]+'-'+b[Math.floor(Math.random()*b.length)]+'-'+randHex(6);
+}
+function newUUID(){currentUUID=uuidv4();document.getElementById('uuidShow').textContent=currentUUID;}
+
+function generate(){
+  if(!currentUUID)newUUID();
+  const ver=document.getElementById('xrayVer').value;
+  const csInput=document.getElementById('csName').value.trim();
+  const name=csInput||randName();
+
+  const configJson=JSON.stringify({
+    log:{loglevel:"warning",access:"none",error:"/tmp/xray-error.log"},
+    dns:{servers:[{address:"https://1.1.1.1/dns-query",domains:["geosite:geolocation-!cn"],queryStrategy:"UseIP"},"8.8.8.8","localhost"],queryStrategy:"UseIPv4"},
+    inbounds:[{tag:"vless-in",port:443,listen:"0.0.0.0",protocol:"vless",
+      settings:{clients:[{id:currentUUID,flow:"",level:0,email:"user@"+name}],decryption:"none"},
+      streamSettings:{network:"xhttp",security:"none",xhttpSettings:{mode:"packet-up",path:"/",maxUploadSize:1000000,maxConcurrentUploads:10}},
+      sniffing:{enabled:true,destOverride:["http","tls","quic"],routeOnly:false}}],
+    outbounds:[{tag:"direct",protocol:"freedom",settings:{domainStrategy:"UseIPv4"}},{tag:"block",protocol:"blackhole",settings:{response:{type:"http"}}}],
+    policy:{levels:{"0":{handshake:4,connIdle:300,uplinkOnly:2,downlinkOnly:5,bufferSize:512}}}
+  },null,2);
+
+  const setupSh=`#!/bin/sh\nset -e\nRELEASE="https://github.com/XTLS/Xray-core/releases/download/${ver}/Xray-linux-64.zip"\nTMPDIR="$(mktemp -d)"\necho "[g2ray] Downloading Xray ${ver}..."\ncurl -sL "$RELEASE" -o "$TMPDIR/xray.zip"\nunzip -q "$TMPDIR/xray.zip" -d "$TMPDIR"\ninstall -m 755 "$TMPDIR/xray" /usr/local/bin/xray\necho "[g2ray] Downloading GeoIP and GeoSite..."\ncurl -sL "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat" -o /usr/local/bin/geoip.dat\ncurl -sL "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat" -o /usr/local/bin/geosite.dat\nrm -rf "$TMPDIR"\necho "[g2ray] Done."`;
+
+  const dockerfile=[
+'FROM debian:bookworm-slim',
+'COPY setup.sh /tmp/setup.sh',
+'COPY config.json /etc/xray/g2ray.json',
+'COPY show-link.sh /usr/local/bin/show-link.sh',
+'COPY start.sh /usr/local/bin/start.sh',
+'RUN apt-get update \\',
+'    && apt-get install -y --no-install-recommends \\',
+'       bash curl wget unzip ca-certificates openssl uuid-runtime \\',
+'    && rm -rf /var/lib/apt/lists/* \\',
+'    && chmod +x /tmp/setup.sh \\',
+'    && /tmp/setup.sh \\',
+'    && rm /tmp/setup.sh \\',
+'    && chmod +x /usr/local/bin/show-link.sh \\',
+'    && chmod +x /usr/local/bin/start.sh',
+'EXPOSE 443',
+'CMD [\"/usr/local/bin/xray\",\"run\",\"-c\",\"/etc/xray/g2ray.json\"]'
+].join('\n');
+
+  const devcontainer=JSON.stringify({
+    name:name,
+    build:{dockerfile:"Dockerfile",context:"."},
+    features:{"ghcr.io/devcontainers/features/common-utils:2":{installZsh:false},"ghcr.io/devcontainers/features/github-cli:1":{version:"latest"}},
+    postAttachCommand:`gh codespace ports visibility 443:public -c $CODESPACE_NAME && bash /usr/local/bin/start.sh`,
+    portsAttributes:{"443":{label:name,protocol:"http",onAutoForward:"silent"}},
+    forwardPorts:[443],
+    hostRequirements:{cpus:2}
+  },null,2);
+
+  const showLink=`#!/bin/bash\nCONFIG="/etc/xray/g2ray.json"\nUUID=$(grep -o '"id": *"[^"]*"' "$CONFIG" | head -1 | grep -o '"[^"]*"$' | tr -d '"')\nif [ -z "$UUID" ]; then echo "[g2ray] UUID پیدا نشد."; exit 1; fi\nHOST="\${CODESPACE_NAME}-443.app.github.dev"\nLINK="vless://\${UUID}@\${HOST}:443?encryption=none&security=tls&sni=\${HOST}&type=xhttp&mode=packet-up&path=%2F#${name}"\necho ""\necho "================================================"\necho "  \$LINK"\necho "================================================"\necho ""`;
+
+  const startSh=`#!/bin/bash\nsudo /usr/local/bin/xray run -c /etc/xray/g2ray.json &>/tmp/xray.log &\nsleep 2\nshow-link.sh\necho "[g2ray] Keep-alive active..."\nwhile true; do sleep 300; echo "[$(date '+%H:%M')] alive" >>/tmp/keepalive.log; done`;
+
+  files={
+    'config.json':configJson,
+    'setup.sh':setupSh,
+    'Dockerfile':dockerfile,
+    'devcontainer.json':devcontainer,
+    'show-link.sh':showLink,
+    'start.sh':startSh
+  };
+
+  const descs={'config.json':'تنظیمات Xray با UUID یکتا','setup.sh':'نصب Xray + GeoIP','Dockerfile':'ساخت container','devcontainer.json':'تنظیمات GitHub Codespaces','show-link.sh':'نمایش لینک اتصال','start.sh':'اجرا + keep-alive'};
+  const changed=['config.json','devcontainer.json','show-link.sh'];
+
+  let html='';
+  for(const[n,d]of Object.entries(descs)){
+    const b=changed.includes(n)?'<span class="badge warn">یکتا</span>':'<span class="badge">ثابت</span>';
+    html+=`<div class="file-row"><div><div class="file-name">${n}</div><div class="file-desc">${d}</div></div><div style="display:flex;align-items:center;gap:8px">${b}<button class="dl-btn" onclick="dl('${n}')">⬇ دانلود</button></div></div>`;
+  }
+
+  document.getElementById('fileList').innerHTML=html;
+  document.getElementById('outputCard').style.display='block';
+  document.getElementById('configPreview').textContent=configJson;
+  document.getElementById('previewCard').style.display='block';
+  document.getElementById('doneMsg').style.display='none';
+}
+
+function dl(name){
+  const mime=name==='Dockerfile'?'application/octet-stream':'text/plain';
+  const blob=new Blob([files[name]],{type:mime});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=name;
+  a.click();
+}
+
+function dlAll(){
+  const order=['config.json','setup.sh','Dockerfile','devcontainer.json','show-link.sh','start.sh'];
+  let i=0;
+  const next=()=>{if(i<order.length){dl(order[i++]);setTimeout(next,500);}else{document.getElementById('doneMsg').style.display='block';}};
+  next();
+}
+
+window.onload=()=>{newUUID();};
+</script>
+</body>
+</html>
